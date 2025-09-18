@@ -7,12 +7,16 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --vh: 1vh; /* fallback */
+    }
+
     body {
       font-family: Arial, sans-serif;
       background: url('bg.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
-      height: 100vh;
+      height: calc(var(--vh, 1vh) * 100);
       display: flex;
       flex-direction: column;
     }
@@ -57,7 +61,7 @@
     }
 
     .grid {
-      flex: 1;
+      flex: 1; /* vyplní všetok voľný priestor */
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(4, 1fr);
@@ -66,20 +70,23 @@
     }
 
     .card {
-      height: 200px;
+      height: 100%;
       border-radius: 10px;
       padding: 6px;
       text-align: center;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      align-items: center;
+      background-size: cover;
+      background-position: center;
     }
 
     .card h2 {
       font-size: 11px;
       margin-bottom: 2px;
       line-height: 1.1;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      text-align: center;
     }
 
     .counter-window {
@@ -88,13 +95,13 @@
       margin: 2px 0;
       line-height: 1;
       text-align: center;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }
 
     .controls {
       display: flex;
       justify-content: center;
       gap: 4px;
+      width: 100%;
     }
 
     button.minus, button.plus {
@@ -120,15 +127,19 @@
       flex: 0 0 auto;
     }
 
-    /* dungeon pozadia */
-    .card.counter-0{ background: url('eco.jpg') no-repeat center center / cover; }
-    .card.counter-1{ background: url('ara.jpg') no-repeat center center / cover; }
-    .card.counter-2{ background: url('dawn.jpg') no-repeat center center / cover; }
-    .card.counter-3{ background: url('priory.jpg') no-repeat center center / cover; }
-    .card.counter-4{ background: url('flood.jpg') no-repeat center center / cover; }
-    .card.counter-5{ background: url('halls.jpg') no-repeat center center / cover; }
-    .card.counter-6{ background: url('streets.jpg') no-repeat center center / cover; }
-    .card.counter-7{ background: url('gambit.jpg') no-repeat center center / cover; }
+    .card.counter-0{ background-image: url('eco.jpg'); }
+    .card.counter-1{ background-image: url('ara.jpg'); }
+    .card.counter-2{ background-image: url('dawn.jpg'); }
+    .card.counter-3{ background-image: url('priory.jpg'); }
+    .card.counter-4{ background-image: url('flood.jpg'); }
+    .card.counter-5{ background-image: url('halls.jpg'); }
+    .card.counter-6{ background-image: url('streets.jpg'); }
+    .card.counter-7{ background-image: url('gambit.jpg'); }
+    
+    .card h2, 
+    .card .counter-window {
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
   </style>
 </head>
 <body>
@@ -155,9 +166,18 @@
   </footer>
 
   <script>
+    // Fix pre iOS Safari výšku
+    function setVh() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    setVh();
+    window.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', setVh);
+
+    // Počítadlá dungeonov
     const counts = [0,0,0,0,0,0,0,0];
 
-    // načítanie uložených hodnôt dungeonov
     const saved = JSON.parse(localStorage.getItem("dungeonCounts"));
     if (saved) {
       saved.forEach((val, idx) => {
@@ -166,7 +186,6 @@
       });
     }
 
-    // funkcia na zmenu čísla
     function change(index, delta) {
       const newVal = Math.max(0, counts[index] + delta);
       counts[index] = newVal;
@@ -174,12 +193,11 @@
       localStorage.setItem("dungeonCounts", JSON.stringify(counts));
     }
 
-    // načítanie ratingu
+    // Rating
     const rioInput = document.getElementById("rio");
     const savedRio = localStorage.getItem("rioRating");
     if (savedRio) rioInput.value = savedRio;
 
-    // uloženie ratingu
     function saveRio() {
       localStorage.setItem("rioRating", rioInput.value);
     }
