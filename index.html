@@ -7,18 +7,15 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --vh: 1vh; /* fallback */
-    }
-
     body {
       font-family: Arial, sans-serif;
       background: url('bg.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
-      height: calc(var(--vh, 1vh) * 100);
+      height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     h1 {
@@ -61,25 +58,23 @@
     }
 
     .grid {
-      flex: 1; /* vyplní všetok voľný priestor */
+      flex: 1;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(4, 1fr);
       gap: 6px;
       padding: 6px;
+      overflow: hidden;
     }
 
     .card {
-      height: 100%;
+      height: 200px;
       border-radius: 10px;
       padding: 6px;
       text-align: center;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      align-items: center;
-      background-size: cover;
-      background-position: center;
     }
 
     .card h2 {
@@ -90,18 +85,17 @@
     }
 
     .counter-window {
-      font-size: 35px;
+      font-size: 40px; /* zväčšené čísla */
       font-weight: bold;
       margin: 2px 0;
       line-height: 1;
-      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }
 
     .controls {
       display: flex;
       justify-content: center;
       gap: 4px;
-      width: 100%;
     }
 
     button.minus, button.plus {
@@ -127,19 +121,14 @@
       flex: 0 0 auto;
     }
 
-    .card.counter-0{ background-image: url('eco.jpg'); }
-    .card.counter-1{ background-image: url('ara.jpg'); }
-    .card.counter-2{ background-image: url('dawn.jpg'); }
-    .card.counter-3{ background-image: url('priory.jpg'); }
-    .card.counter-4{ background-image: url('flood.jpg'); }
-    .card.counter-5{ background-image: url('halls.jpg'); }
-    .card.counter-6{ background-image: url('streets.jpg'); }
-    .card.counter-7{ background-image: url('gambit.jpg'); }
-    
-    .card h2, 
-    .card .counter-window {
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-    }
+    .card.counter-0{ background: url('eco.jpg') no-repeat center center / cover; }
+    .card.counter-1{ background: url('ara.jpg') no-repeat center center / cover; }
+    .card.counter-2{ background: url('dawn.jpg') no-repeat center center / cover; }
+    .card.counter-3{ background: url('priory.jpg') no-repeat center center / cover; }
+    .card.counter-4{ background: url('flood.jpg') no-repeat center center / cover; }
+    .card.counter-5{ background: url('halls.jpg') no-repeat center center / cover; }
+    .card.counter-6{ background: url('streets.jpg') no-repeat center center / cover; }
+    .card.counter-7{ background: url('gambit.jpg') no-repeat center center / cover; }
   </style>
 </head>
 <body>
@@ -150,15 +139,15 @@
     <button onclick="saveRio()">Uložiť</button>
   </div>
 
-  <div class="grid">
-    <div class="card counter-0"><h2>Eco-Dome Al’dani</h2><div id="counter-0" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(0,-1)">-</button><button class="plus" onclick="change(0,1)">+</button></div></div>
-    <div class="card counter-1"><h2>Ara-Kara, City of Echoes</h2><div id="counter-1" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(1,-1)">-</button><button class="plus" onclick="change(1,1)">+</button></div></div>
-    <div class="card counter-2"><h2>The Dawnbreaker</h2><div id="counter-2" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(2,-1)">-</button><button class="plus" onclick="change(2,1)">+</button></div></div>
-    <div class="card counter-3"><h2>Priory of the Sacred Flame</h2><div id="counter-3" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(3,-1)">-</button><button class="plus" onclick="change(3,1)">+</button></div></div>
-    <div class="card counter-4"><h2>Operation: Floodgate</h2><div id="counter-4" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(4,-1)">-</button><button class="plus" onclick="change(4,1)">+</button></div></div>
-    <div class="card counter-5"><h2>Halls of Atonement</h2><div id="counter-5" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(5,-1)">-</button><button class="plus" onclick="change(5,1)">+</button></div></div>
-    <div class="card counter-6"><h2>Tazavesh: Streets of Wonder</h2><div id="counter-6" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(6,-1)">-</button><button class="plus" onclick="change(6,1)">+</button></div></div>
-    <div class="card counter-7"><h2>Tazavesh: So’leah’s Gambit</h2><div id="counter-7" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(7,-1)">-</button><button class="plus" onclick="change(7,1)">+</button></div></div>
+  <div class="grid" id="grid">
+    <div class="card counter-0" data-index="0"><h2>Eco-Dome Al’dani</h2><div id="counter-0" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(0,-1)">-</button><button class="plus" onclick="change(0,1)">+</button></div></div>
+    <div class="card counter-1" data-index="1"><h2>Ara-Kara, City of Echoes</h2><div id="counter-1" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(1,-1)">-</button><button class="plus" onclick="change(1,1)">+</button></div></div>
+    <div class="card counter-2" data-index="2"><h2>The Dawnbreaker</h2><div id="counter-2" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(2,-1)">-</button><button class="plus" onclick="change(2,1)">+</button></div></div>
+    <div class="card counter-3" data-index="3"><h2>Priory of the Sacred Flame</h2><div id="counter-3" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(3,-1)">-</button><button class="plus" onclick="change(3,1)">+</button></div></div>
+    <div class="card counter-4" data-index="4"><h2>Operation: Floodgate</h2><div id="counter-4" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(4,-1)">-</button><button class="plus" onclick="change(4,1)">+</button></div></div>
+    <div class="card counter-5" data-index="5"><h2>Halls of Atonement</h2><div id="counter-5" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(5,-1)">-</button><button class="plus" onclick="change(5,1)">+</button></div></div>
+    <div class="card counter-6" data-index="6"><h2>Tazavesh: Streets of Wonder</h2><div id="counter-6" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(6,-1)">-</button><button class="plus" onclick="change(6,1)">+</button></div></div>
+    <div class="card counter-7" data-index="7"><h2>Tazavesh: So’leah’s Gambit</h2><div id="counter-7" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(7,-1)">-</button><button class="plus" onclick="change(7,1)">+</button></div></div>
   </div>
 
   <footer>
@@ -166,24 +155,16 @@
   </footer>
 
   <script>
-    // Fix pre iOS Safari výšku
-    function setVh() {
-      let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    setVh();
-    window.addEventListener('resize', setVh);
-    window.addEventListener('orientationchange', setVh);
-
-    // Počítadlá dungeonov
     const counts = [0,0,0,0,0,0,0,0];
 
+    // Načítanie uložených hodnôt
     const saved = JSON.parse(localStorage.getItem("dungeonCounts"));
     if (saved) {
       saved.forEach((val, idx) => {
         counts[idx] = val;
         document.getElementById(`counter-${idx}`).textContent = val;
       });
+      sortCards();
     }
 
     function change(index, delta) {
@@ -191,9 +172,22 @@
       counts[index] = newVal;
       document.getElementById(`counter-${index}`).textContent = newVal;
       localStorage.setItem("dungeonCounts", JSON.stringify(counts));
+      sortCards();
     }
 
-    // Rating
+    function sortCards() {
+      const grid = document.getElementById("grid");
+      const cards = Array.from(grid.children);
+
+      cards.sort((a, b) => {
+        const idxA = parseInt(a.dataset.index);
+        const idxB = parseInt(b.dataset.index);
+        return counts[idxB] - counts[idxA]; // zostupne
+      });
+
+      cards.forEach(card => grid.appendChild(card));
+    }
+
     const rioInput = document.getElementById("rio");
     const savedRio = localStorage.getItem("rioRating");
     if (savedRio) rioInput.value = savedRio;
