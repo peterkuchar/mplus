@@ -102,22 +102,23 @@ button {
 }
 
 @media (max-width: 600px) {
-  h1 {
-    font-size: 18px;
-  }
   .grid {
-    grid-template-columns: 1fr; /* všetko pod sebou */
+    grid-template-columns: 1fr; /* každý dungeon celý riadok */
   }
   .card {
-    min-height: 140px;
+    min-height: 120px;
+    width: 100%;
   }
   .counter-window {
     font-size: 28px;
     padding: 16px;
   }
+  .controls {
+    justify-content: center; /* tlačidlá budú zarovnané na stred */
+  }
   button {
-    font-size: 16px;
-    padding: 8px 14px;
+    flex: 1; /* tlačidlá roztiahnuť aby boli väčšie a rovnaké */
+    max-width: 100px;
   }
 }
 </style>
@@ -243,4 +244,5 @@ function change(index, delta) {
 </body>
 
 </html>
+
 
