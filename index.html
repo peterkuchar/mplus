@@ -12,7 +12,7 @@
       background: url('bg.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
-      height: 100vh;
+      height: 100dvh; /* použijeme dynamic viewport */
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -68,7 +68,6 @@
     }
 
     .card {
-      height: 200px;
       border-radius: 10px;
       padding: 6px;
       text-align: center;
@@ -85,7 +84,7 @@
     }
 
     .counter-window {
-      font-size: 40px; /* zväčšené čísla */
+      font-size: 40px; /* väčšie čísla */
       font-weight: bold;
       margin: 2px 0;
       line-height: 1;
