@@ -28,10 +28,11 @@
 
     .rating {
       text-align: center;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: flex;
       justify-content: center;
       gap: 6px;
+      flex: 0 0 auto;
     }
 
     .rating input {
@@ -42,7 +43,7 @@
       font-size: 16px;
       color: #fff;
       text-align: center;
-      width: 150px;
+      width: 120px;
     }
 
     .rating button {
@@ -56,7 +57,7 @@
     }
 
     .grid {
-      flex: 1;
+      flex: 1; /* vyplní všetok voľný priestor */
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(4, 1fr);
@@ -67,7 +68,7 @@
     .card {
       background: rgba(0, 0, 0, 0.55);
       border-radius: 10px;
-      padding: 8px;
+      padding: 6px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -75,29 +76,30 @@
     }
 
     .card h2 {
-      font-size: 12px;
-      margin-bottom: 4px;
-      line-height: 1.2;
+      font-size: 11px;
+      margin-bottom: 2px;
+      line-height: 1.1;
     }
 
     .counter-window {
       font-size: 35px;
       font-weight: bold;
-      margin: 4px 0;
+      margin: 2px 0;
+      line-height: 1;
     }
 
     .controls {
       display: flex;
       justify-content: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     button.minus, button.plus {
       flex: 1;
-      min-width: 36px;
-      height: 36px;
+      min-width: 30px;
+      height: 32px;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 20px;
       font-weight: bold;
       cursor: pointer;
@@ -110,7 +112,7 @@
     footer {
       text-align: center;
       font-size: 11px;
-      padding: 4px;
+      padding: 3px;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
       flex: 0 0 auto;
     }
@@ -119,7 +121,6 @@
 <body>
   <h1>Mythic+</h1>
 
-  <!-- Rating input s tlačidlom -->
   <div class="rating">
     <input type="text" id="rio" placeholder="M+ Rating">
     <button onclick="saveRio()">Uložiť</button>
@@ -143,7 +144,6 @@
   <script>
     const counts = [0,0,0,0,0,0,0,0];
 
-    // načítanie dungeon levelov
     const saved = JSON.parse(localStorage.getItem("dungeonCounts"));
     if (saved) {
       saved.forEach((val, idx) => {
@@ -152,7 +152,6 @@
       });
     }
 
-    // funkcia na zmenu levelu
     function change(index, delta) {
       const newVal = Math.max(0, counts[index] + delta);
       counts[index] = newVal;
@@ -160,16 +159,13 @@
       localStorage.setItem("dungeonCounts", JSON.stringify(counts));
     }
 
-    // načítanie ratingu
     const rioInput = document.getElementById("rio");
     const savedRio = localStorage.getItem("rioRating");
     if (savedRio) rioInput.value = savedRio;
 
-    // uloženie ratingu klikom
     function saveRio() {
       localStorage.setItem("rioRating", rioInput.value);
     }
   </script>
 </body>
 </html>
-
