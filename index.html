@@ -1,126 +1,85 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
-  <title>Mythic+ counters</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mythic+</title>
   <style>
-    :root { --vh: 1vh; }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body {
-      height: 100%;
-    }
-
-    /* use JS-set --vh to avoid iOS 100vh issues */
     body {
       font-family: Arial, sans-serif;
-      min-height: calc(var(--vh) * 100);
       background: url('bg.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    header {
-      text-align: center;
-      padding: 8px 6px;
-      flex: 0 0 auto;
     }
 
     h1 {
+      text-align: center;
+      margin: 5px 0 2px;
       font-size: 22px;
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
-      margin-bottom: 6px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+      flex: 0 0 auto;
     }
 
-    /* rating row */
     .rating {
+      text-align: center;
+      margin-bottom: 4px;
       display: flex;
-      gap: 8px;
       justify-content: center;
-      align-items: center;
-      margin-bottom: 6px;
+      gap: 6px;
+      flex: 0 0 auto;
     }
+
     .rating input {
-      width: 140px;
-      padding: 6px 8px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(0,0,0,0.45);
+      background: rgba(0,0,0,0.5);
+      border: 1px solid #666;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 16px;
       color: #fff;
       text-align: center;
-      font-size: 16px;
+      width: 120px;
     }
+
     .rating button {
-      padding: 6px 10px;
-      border-radius: 8px;
+      background: #3498db;
       border: none;
-      background: #2d98da;
-      color: #fff;
-      font-weight: 600;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 16px;
+      color: white;
       cursor: pointer;
     }
 
-    /* 2 columns x 4 rows grid that fills remaining height */
     .grid {
-      flex: 1 1 auto;
+      flex: 1;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(4, 1fr);
-      gap: 8px;
-      padding: 8px;
+      gap: 6px;
+      padding: 6px;
     }
 
     .card {
-      position: relative;
-      overflow: hidden;
+      height: 200px;
       border-radius: 10px;
+      padding: 6px;
+      text-align: center;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 8px;
-      min-height: 0; /* important for grid */
-      background-color: rgba(0,0,0,0.45); /* fallback if image missing */
-    }
-
-    /* background images for each card (ensure filenames & case match!) */
-    .card.bg-0 { background-image: url('eco.jpg'); background-position: center; background-size: cover; }
-    .card.bg-1 { background-image: url('ara.jpg'); background-position: center; background-size: cover; }
-    .card.bg-2 { background-image: url('dawn.jpg'); background-position: center; background-size: cover; }
-    .card.bg-3 { background-image: url('priory.jpg'); background-position: center; background-size: cover; }
-    .card.bg-4 { background-image: url('flood.jpg'); background-position: center; background-size: cover; }
-    .card.bg-5 { background-image: url('halls.jpg'); background-position: center; background-size: cover; }
-    .card.bg-6 { background-image: url('streets.jpg'); background-position: center; background-size: cover; }
-    .card.bg-7 { background-image: url('gambit.jpg'); background-position: center; background-size: cover; }
-
-    /* subtle dark overlay so text is readable */
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.5));
-      z-index: 0;
-    }
-
-    .card .content {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
     }
 
     .card h2 {
-      font-size: 12px;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-      margin-bottom: 4px;
+      font-size: 11px;
+      margin-bottom: 2px;
       line-height: 1.1;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }
 
     .counter-window {
@@ -128,179 +87,102 @@
       font-weight: bold;
       margin: 2px 0;
       line-height: 1;
-      text-align: center;   /* číslo ostane pekne v strede */
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }
 
     .controls {
       display: flex;
-      gap: 6px;
       justify-content: center;
-      align-items: center;
+      gap: 4px;
     }
 
-    .controls button {
+    button.minus, button.plus {
+      flex: 1;
+      min-width: 30px;
+      height: 32px;
       border: none;
-      border-radius: 8px;
-      padding: 6px 12px;
-      min-width: 44px;
-      height: 40px;
+      border-radius: 6px;
       font-size: 20px;
-      font-weight: 700;
-      color: #fff;
+      font-weight: bold;
       cursor: pointer;
-    }
-    .controls .minus { background: #e74c3c; }
-    .controls .plus  { background: #1abc9c; }
+      color: white;
+    }    
+
+    .minus { background-color: #e74c3c; }
+    .plus  { background-color: #1abc9c; }
 
     footer {
-      flex: 0 0 auto;
       text-align: center;
-      padding: 6px;
-      font-size: 12px;
+      font-size: 11px;
+      padding: 3px;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+      flex: 0 0 auto;
     }
 
-    /* smaller devices fallback: if screen is narrow, fall to single column */
-    @media (max-width: 420px) {
-      .grid { grid-template-columns: 1fr; grid-template-rows: repeat(8, 1fr); }
-    }
+    /* dungeon pozadia */
+    .card.counter-0{ background: url('eco.jpg') no-repeat center center / cover; }
+    .card.counter-1{ background: url('ara.jpg') no-repeat center center / cover; }
+    .card.counter-2{ background: url('dawn.jpg') no-repeat center center / cover; }
+    .card.counter-3{ background: url('priory.jpg') no-repeat center center / cover; }
+    .card.counter-4{ background: url('flood.jpg') no-repeat center center / cover; }
+    .card.counter-5{ background: url('halls.jpg') no-repeat center center / cover; }
+    .card.counter-6{ background: url('streets.jpg') no-repeat center center / cover; }
+    .card.counter-7{ background: url('gambit.jpg') no-repeat center center / cover; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Mythic+</h1>
-    <div class="rating">
-      <input id="rio" type="text" placeholder="M+ Rating (Raider.IO)">
-      <button id="saveRioBtn">Uložiť</button>
-    </div>
-  </header>
+  <h1>Mythic+</h1>
 
-  <main class="grid" id="grid">
-    <div class="card bg-0">
-      <div class="content">
-        <h2>Eco-Dome Al’dani</h2>
-        <div id="counter-0" class="counter-window">0</div>
-        <div class="controls">
-          <button class="minus" onclick="change(0,-1)">−</button>
-          <button class="plus" onclick="change(0,1)">+</button>
-        </div>
-      </div>
-    </div>
+  <div class="rating">
+    <input type="text" id="rio" placeholder="M+ Rating">
+    <button onclick="saveRio()">Uložiť</button>
+  </div>
 
-    <div class="card bg-1">
-      <div class="content">
-        <h2>Ara-Kara, City of Echoes</h2>
-        <div id="counter-1" class="counter-window">0</div>
-        <div class="controls">
-          <button class="minus" onclick="change(1,-1)">−</button>
-          <button class="plus" onclick="change(1,1)">+</button>
-        </div>
-      </div>
-    </div>
+  <div class="grid">
+    <div class="card counter-0"><h2>Eco-Dome Al’dani</h2><div id="counter-0" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(0,-1)">-</button><button class="plus" onclick="change(0,1)">+</button></div></div>
+    <div class="card counter-1"><h2>Ara-Kara, City of Echoes</h2><div id="counter-1" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(1,-1)">-</button><button class="plus" onclick="change(1,1)">+</button></div></div>
+    <div class="card counter-2"><h2>The Dawnbreaker</h2><div id="counter-2" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(2,-1)">-</button><button class="plus" onclick="change(2,1)">+</button></div></div>
+    <div class="card counter-3"><h2>Priory of the Sacred Flame</h2><div id="counter-3" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(3,-1)">-</button><button class="plus" onclick="change(3,1)">+</button></div></div>
+    <div class="card counter-4"><h2>Operation: Floodgate</h2><div id="counter-4" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(4,-1)">-</button><button class="plus" onclick="change(4,1)">+</button></div></div>
+    <div class="card counter-5"><h2>Halls of Atonement</h2><div id="counter-5" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(5,-1)">-</button><button class="plus" onclick="change(5,1)">+</button></div></div>
+    <div class="card counter-6"><h2>Tazavesh: Streets of Wonder</h2><div id="counter-6" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(6,-1)">-</button><button class="plus" onclick="change(6,1)">+</button></div></div>
+    <div class="card counter-7"><h2>Tazavesh: So’leah’s Gambit</h2><div id="counter-7" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(7,-1)">-</button><button class="plus" onclick="change(7,1)">+</button></div></div>
+  </div>
 
-    <div class="card bg-2">
-      <div class="content">
-        <h2>The Dawnbreaker</h2>
-        <div id="counter-2" class="counter-window">0</div>
-        <div class="controls">
-          <button class="minus" onclick="change(2,-1)">−</button>
-          <button class="plus" onclick="change(2,1)">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card bg-3">
-      <div class="content">
-        <h2>Priory of the Sacred Flame</h2>
-        <div id="counter-3" class="counter-window">0</div>
-        <div class="controls">
-          <button class="minus" onclick="change(3,-1)">−</button>
-          <button class="plus" onclick="change(3,1)">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card bg-4">
-      <div class="content">
-        <h2>Operation: Floodgate</h2>
-        <div id="counter-4" class="counter-window">0</div>
-        <div class="controls">
-          <button class="minus" onclick="change(4,-1)">−</button>
-          <button class="plus" onclick="change(4,1)">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card bg-5">
-      <div class="content">
-        <h2>Halls of Atonement</h2>
-        <div id="counter-5" class="counter-window">0</div>
-        <div class="controls">
-          <button class="minus" onclick="change(5,-1)">−</button>
-          <button class="plus" onclick="change(5,1)">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card bg-6">
-      <div class="content">
-        <h2>Tazavesh: Streets of Wonder</h2>
-        <div id="counter-6" class="counter-window">0</div>
-        <div class="controls">
-          <button class="minus" onclick="change(6,-1)">−</button>
-          <button class="plus" onclick="change(6,1)">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card bg-7">
-      <div class="content">
-        <h2>Tazavesh: So’leah’s Gambit</h2>
-        <div id="counter-7" class="counter-window">0</div>
-        <div class="controls">
-          <button class="minus" onclick="change(7,-1)">−</button>
-          <button class="plus" onclick="change(7,1)">+</button>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <footer>Hodnoty a rating sa ukladajú do prehliadača (localStorage).</footer>
+  <footer>
+    Hodnoty aj rating sa ukladajú aj po zatvorení prehliadača.
+  </footer>
 
   <script>
-    // Fix viewport for iOS: set --vh to innerHeight*0.01
-    function setVh() {
-      document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-    }
-    setVh();
-    window.addEventListener('resize', setVh);
-    // also on orientation change
-    window.addEventListener('orientationchange', () => setTimeout(setVh, 300));
-
-    // counters
     const counts = [0,0,0,0,0,0,0,0];
-    const saved = JSON.parse(localStorage.getItem('dungeonCounts'));
-    if (saved && Array.isArray(saved)) {
-      for (let i=0;i<saved.length && i<counts.length;i++) {
-        counts[i] = Number(saved[i]) || 0;
-        const el = document.getElementById('counter-' + i);
-        if (el) el.textContent = counts[i];
-      }
+
+    // načítanie uložených hodnôt dungeonov
+    const saved = JSON.parse(localStorage.getItem("dungeonCounts"));
+    if (saved) {
+      saved.forEach((val, idx) => {
+        counts[idx] = val;
+        document.getElementById(`counter-${idx}`).textContent = val;
+      });
     }
 
+    // funkcia na zmenu čísla
     function change(index, delta) {
-      counts[index] = Math.max(0, (counts[index] || 0) + delta);
-      const el = document.getElementById('counter-' + index);
-      if (el) el.textContent = counts[index];
-      localStorage.setItem('dungeonCounts', JSON.stringify(counts));
+      const newVal = Math.max(0, counts[index] + delta);
+      counts[index] = newVal;
+      document.getElementById(`counter-${index}`).textContent = newVal;
+      localStorage.setItem("dungeonCounts", JSON.stringify(counts));
     }
 
-    // rating
-    const rioInput = document.getElementById('rio');
-    const savedRio = localStorage.getItem('rioRating');
+    // načítanie ratingu
+    const rioInput = document.getElementById("rio");
+    const savedRio = localStorage.getItem("rioRating");
     if (savedRio) rioInput.value = savedRio;
 
-    document.getElementById('saveRioBtn').addEventListener('click', () => {
-      l
-
-
+    // uloženie ratingu
+    function saveRio() {
+      localStorage.setItem("rioRating", rioInput.value);
+    }
+  </script>
+</body>
+</html>
