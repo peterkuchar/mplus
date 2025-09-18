@@ -5,29 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mythic+</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: Arial, sans-serif;
       background: url('bg.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
-      height: 100%; /* presne výška displeja */
+      height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
     h1 {
       text-align: center;
-      margin: 5px 0;
+      margin: 5px 0 2px;
       font-size: 22px;
       font-weight: bold;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
       flex: 0 0 auto;
+    }
+
+    .rating {
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .rating input {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid #666;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 16px;
+      color: #fff;
+      text-align: center;
+      width: 150px;
     }
 
     .grid {
@@ -70,7 +82,7 @@
     button {
       flex: 1;
       min-width: 36px;
-      height: 45px;
+      height: 36px;
       border: none;
       border-radius: 8px;
       font-size: 20px;
@@ -79,13 +91,8 @@
       color: white;
     }
 
-    .minus {
-      background-color: #e74c3c;
-    }
-
-    .plus {
-      background-color: #1abc9c;
-    }
+    .minus { background-color: #e74c3c; }
+    .plus  { background-color: #1abc9c; }
 
     footer {
       text-align: center;
@@ -98,6 +105,12 @@
 </head>
 <body>
   <h1>Mythic+</h1>
+
+  <!-- Rating input -->
+  <div class="rating">
+    <input type="text" id="rio" placeholder="M+ Rating">
+  </div>
+
   <div class="grid">
     <div class="card"><h2>Eco-Dome Al’dani</h2><div id="counter-0" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(0,-1)">-</button><button class="plus" onclick="change(0,1)">+</button></div></div>
     <div class="card"><h2>Ara-Kara, City of Echoes</h2><div id="counter-1" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(1,-1)">-</button><button class="plus" onclick="change(1,1)">+</button></div></div>
@@ -108,14 +121,15 @@
     <div class="card"><h2>Tazavesh: Streets of Wonder</h2><div id="counter-6" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(6,-1)">-</button><button class="plus" onclick="change(6,1)">+</button></div></div>
     <div class="card"><h2>Tazavesh: So’leah’s Gambit</h2><div id="counter-7" class="counter-window">0</div><div class="controls"><button class="minus" onclick="change(7,-1)">-</button><button class="plus" onclick="change(7,1)">+</button></div></div>
   </div>
+
   <footer>
-    Hodnoty sa ukladajú aj po zatvorení prehliadača.
+    Hodnoty aj rating sa ukladajú aj po zatvorení prehliadača.
   </footer>
 
   <script>
     const counts = [0,0,0,0,0,0,0,0];
 
-    // Načítanie z localStorage
+    // načítanie dungeon levelov
     const saved = JSON.parse(localStorage.getItem("dungeonCounts"));
     if (saved) {
       saved.forEach((val, idx) => {
@@ -124,20 +138,23 @@
       });
     }
 
-    // Funkcia na zmenu
+    // funkcia na zmenu levelu
     function change(index, delta) {
       const newVal = Math.max(0, counts[index] + delta);
       counts[index] = newVal;
       document.getElementById(`counter-${index}`).textContent = newVal;
       localStorage.setItem("dungeonCounts", JSON.stringify(counts));
     }
+
+    // načítanie ratingu
+    const rioInput = document.getElementById("rio");
+    const savedRio = localStorage.getItem("rioRating");
+    if (savedRio) rioInput.value = savedRio;
+
+    // ukladanie pri zmene
+    rioInput.addEventListener("input", () => {
+      localStorage.setItem("rioRating", rioInput.value);
+    });
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
