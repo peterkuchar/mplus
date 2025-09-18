@@ -1,94 +1,125 @@
 <!doctype html>
 <style>
-    :root{
-        --bg:#0f172a;
-        --card:#0b1220;
-        --accent:#10b981;
-        --muted:#94a3b8;}
+    body {
+  font-family: Inter, system-ui, Arial, sans-serif;
+  margin: 8px;
+  background: url("images/mythicplus-bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #e6eef8;
+}
 
-    *{box-sizing:border-box;}
-    
-    body{
-        font-family:Inter, system-ui, Arial, sans-serif;
-        margin:16px;
-        background:linear-gradient(180deg,#071024 0%, #081127 100%);
-        color:#e6eef8;}
+/* Nadpis */
+h1 {
+  text-align: center;
+  margin: 12px 0;
+  font-size: 22px;
+}
 
-        h1{
-            text-align:center;
-            margin-bottom:20px;
-            font-size:20px;}
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-        .grid{
-            display:grid;
-            grid-template-columns:repeat(4,1fr);
-            gap:16px;
-            max-width:1200px;
-            margin:0 auto;}
+/* Dungeon karta */
+.card {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 160px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+}
 
-        .card{
-            background:rgba(255,255,255,0.03);
-            border-radius:12px;
-            padding:14px;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            box-shadow:0 6px 18px rgba(2,6,23,0.6);
-            min-height:140px;}
+.dungeon-name {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #ddd;
+}
 
-        .dungeon-name{
-            text-align:center;
-            font-weight:600;
-            margin-bottom:10px;
-            font-size:14px;
-            color:var(--muted);}
+/* Okná s číslami */
+.counter-window {
+  width: 100%;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+}
 
-        .counter-window{
-            width:100%;
-            background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
-            border-radius:8px;
-            padding:18px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:34px;
-            font-weight:700;
-            color:#fff;}
+/* Ovládacie tlačidlá */
+.controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
 
-        .controls{
-            display:flex;
-            gap:8px;
-            margin-top:12px;}
+button {
+  border: 0;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 18px;
+  cursor: pointer;
+}
 
-        button{
-            appearance:none;
-            border:0;
-            padding:8px 12px;
-            border-radius:8px;
-            font-weight:700;
-            cursor:pointer;}
+.btn-plus {
+  background: linear-gradient(180deg, #06b6d4, #0ea5a4);
+  color: #042023;
+}
 
-        .btn-plus{
-            background:linear-gradient(180deg, #06b6d4, #0ea5a4);
-            color:#042023;}
+.btn-minus {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+  color: #fff;
+}
 
-        .btn-minus{
-            background:linear-gradient(180deg, #ef4444, #dc2626);
-            color:#fff;}
+/* Text pod gridom */
+.footer {
+  max-width: 1200px;
+  margin: 12px auto 0;
+  color: #bbb;
+  text-align: center;
+  font-size: 12px;
+}
 
-        .small{
-            font-size:13px;
-            padding:6px 10px;}
+/* 📱 Mobilné úpravy */
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
-        .footer{
-            max-width:1200px;
-            margin:18px auto 0;
-            color:var(--muted);
-            text-align:center;
-            font-size:13px;}
-
-        @media (max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
-        @media (max-width:560px){.grid{grid-template-columns:1fr}}
+@media (max-width: 600px) {
+  h1 {
+    font-size: 18px;
+  }
+  .grid {
+    grid-template-columns: 1fr; /* všetko pod sebou */
+  }
+  .card {
+    min-height: 140px;
+  }
+  .counter-window {
+    font-size: 28px;
+    padding: 16px;
+  }
+  button {
+    font-size: 16px;
+    padding: 8px 14px;
+  }
+}
 </style>
 <!-- <link rel="stylesheet" href="style.css"> -->
 </head>
@@ -210,4 +241,5 @@ function change(index, delta) {
 }
 </script>
 </body>
+
 </html>
