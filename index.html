@@ -5,19 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mythic+</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap');
-
-    :root {
-      --vh: 100%;
-    }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --vh: 1vh; /* fallback */
+    }
+
     body {
-      font-family: 'Uncial Antiqua', serif;
+      font-family: Arial, sans-serif;
       background: url('bg.jpg') no-repeat center center fixed;
       background-size: cover;
-      color: #FFD100;
+      color: #fff;
       height: calc(var(--vh, 1vh) * 100);
       display: flex;
       flex-direction: column;
@@ -26,11 +24,9 @@
     h1 {
       text-align: center;
       margin: 5px 0 2px;
-      font-size: 26px;
+      font-size: 22px;
       font-weight: bold;
-      text-shadow: 2px 2px 6px black;
-      border-bottom: 2px solid #FFD100;
-      padding-bottom: 4px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
       flex: 0 0 auto;
     }
 
@@ -44,29 +40,28 @@
     }
 
     .rating input {
-      background: rgba(0,0,0,0.7);
-      border: 2px solid #FFD100;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid #666;
       border-radius: 6px;
       padding: 4px 8px;
       font-size: 16px;
-      color: #FFD100;
+      color: #fff;
       text-align: center;
       width: 120px;
     }
 
     .rating button {
-      background: #A62C2B;
-      border: 2px solid #FFD100;
+      background: #3498db;
+      border: none;
       border-radius: 6px;
       padding: 4px 10px;
       font-size: 16px;
-      font-weight: bold;
       color: white;
       cursor: pointer;
     }
 
     .grid {
-      flex: 1;
+      flex: 1; /* vyplní všetok voľný priestor */
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(4, 1fr);
@@ -75,41 +70,38 @@
     }
 
     .card {
-      border: 2px solid #FFD100;
-      border-radius: 8px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.9);
+      height: 100%;
+      border-radius: 10px;
       padding: 6px;
       text-align: center;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      align-items: center;
       background-size: cover;
       background-position: center;
     }
 
     .card h2 {
-      font-size: 12px;
-      font-weight: bold;
-      color: #FFD100;
-      text-shadow: 2px 2px 6px black;
+      font-size: 11px;
       margin-bottom: 2px;
       line-height: 1.1;
+      text-align: center;
     }
 
     .counter-window {
-      font-size: 42px;
+      font-size: 35px;
       font-weight: bold;
       margin: 2px 0;
       line-height: 1;
       text-align: center;
-      color: #fff;
-      text-shadow: 2px 2px 6px black, 0 0 6px #FFD100;
     }
 
     .controls {
       display: flex;
       justify-content: center;
       gap: 4px;
+      width: 100%;
     }
 
     button.minus, button.plus {
@@ -122,17 +114,10 @@
       font-weight: bold;
       cursor: pointer;
       color: white;
-    }
+    }    
 
-    .minus {
-      background-color: #A62C2B;
-      border: 2px solid #FFD100;
-    }
-
-    .plus {
-      background-color: #1C75BC;
-      border: 2px solid #FFD100;
-    }
+    .minus { background-color: #e74c3c; }
+    .plus  { background-color: #1abc9c; }
 
     footer {
       text-align: center;
@@ -142,7 +127,6 @@
       flex: 0 0 auto;
     }
 
-    /* Dungeon pozadia */
     .card.counter-0{ background-image: url('eco.jpg'); }
     .card.counter-1{ background-image: url('ara.jpg'); }
     .card.counter-2{ background-image: url('dawn.jpg'); }
@@ -151,6 +135,11 @@
     .card.counter-5{ background-image: url('halls.jpg'); }
     .card.counter-6{ background-image: url('streets.jpg'); }
     .card.counter-7{ background-image: url('gambit.jpg'); }
+    
+    .card h2, 
+    .card .counter-window {
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
   </style>
 </head>
 <body>
@@ -177,7 +166,7 @@
   </footer>
 
   <script>
-    // výška viewportu bez Safari lišt
+    // Fix pre iOS Safari výšku
     function setVh() {
       let vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -186,7 +175,9 @@
     window.addEventListener('resize', setVh);
     window.addEventListener('orientationchange', setVh);
 
+    // Počítadlá dungeonov
     const counts = [0,0,0,0,0,0,0,0];
+
     const saved = JSON.parse(localStorage.getItem("dungeonCounts"));
     if (saved) {
       saved.forEach((val, idx) => {
@@ -202,6 +193,7 @@
       localStorage.setItem("dungeonCounts", JSON.stringify(counts));
     }
 
+    // Rating
     const rioInput = document.getElementById("rio");
     const savedRio = localStorage.getItem("rioRating");
     if (savedRio) rioInput.value = savedRio;
