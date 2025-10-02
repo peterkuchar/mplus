@@ -125,3 +125,11 @@ footer a { color: #fff; }
 .card.counter-5{ background: url('halls.jpg') no-repeat center center / cover; }
 .card.counter-6{ background: url('streets.jpg') no-repeat center center / cover; }
 .card.counter-7{ background: url('gambit.jpg') no-repeat center center / cover; }
+
+input, button, select {
+  font-size: 16px;
+}
+
+.character-input {
+  font-size: 16px;
+}
