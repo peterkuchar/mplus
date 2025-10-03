@@ -2,26 +2,41 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WoW M+ Tracker</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-  <title>Mythic+</title>
 </head>
 <body>
-  <h1>Mythic+</h1>
+  <div class="char-select">
+    <select id="region">
+      <option value="eu">EU</option>
+      <option value="us">US - soon</option>
+      <option value="kr">KR - soon</option>
+      <option value="tw">TW - soon</option>
+    </select>
 
-  <div class="character-select">
-    <input type="text" id="charName" placeholder="Meno postavy">
+    <select id="realm">
+      <option value="">Vyber realm</option>
+    </select>
+
+    <input type="text" id="character" placeholder="Meno postavy">
     <button onclick="addCharacter()">Pridať</button>
-    <select id="characterList" onchange="switchCharacter(this.value)"></select>
   </div>
 
-  <div id="rioRating" class="rating">M+ Rating: -</div>
+  <!-- Tu sa zobrazí zoznam postáv -->
+  <label for="savedCharacters">Moje postavy:</label>
+    <select id="savedCharacters">
+      <option value="">-- vyber postavu --</option>
+    </select>
+  <button id="removeCharacter">Odobrať postavu</button>
 
-  <div class="grid" id="grid"></div>
+  <!-- tu pridáme rating -->
+  <h1 id="mythicRating">Mythic+ Rating: -</h1>
 
-  <footer>
-    Dáta z <a href="https://raider.io" target="_blank">Raider.IO</a>
-  </footer>
+  <div id="dungeons"></div>
+
+  <!-- Tu sa zobrazia dungeony -->
+  <div id="dungeons" class="dungeon-grid"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
