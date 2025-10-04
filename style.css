@@ -120,13 +120,14 @@ body::before {
 }
 
 .dungeon h3 {  
-  font-size: 0.8rem;  
+  font-size: 0.8rem;
+  margin-bottom: 4px;
 }
 
 .level {
   font-size: 1.25rem;
   font-weight: bold; 
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .score, .time {  
@@ -162,6 +163,7 @@ body::before {
     font-size: 0.9rem;
   }
 }
+
 
 
 
