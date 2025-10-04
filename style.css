@@ -83,6 +83,14 @@ body::before {
   text-shadow: 2px 2px 6px #000;
 }
 
+#charInfo {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 5px;
+  color: #ddd;
+  text-shadow: 1px 1px 4px #000;
+}
+
 /* ====== DUNGEONY (75%) ====== */
 #dungeons {
   flex: 1;
@@ -111,7 +119,6 @@ body::before {
   text-align: center;
   text-shadow: 2px 2px 6px black;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  padding: 4px;
 }
 
 .dungeon:hover {
@@ -120,14 +127,13 @@ body::before {
 }
 
 .dungeon h3 {  
-  font-size: 0.8rem;
-  margin-bottom: 4px;
+  font-size: 0.8rem;  
 }
 
 .level {
   font-size: 1.25rem;
   font-weight: bold; 
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 .score, .time {  
@@ -163,9 +169,6 @@ body::before {
     font-size: 0.9rem;
   }
 }
-
-
-
 
 
 
