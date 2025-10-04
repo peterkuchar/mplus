@@ -59,21 +59,21 @@ body::before {
   padding: 6px 10px;
   border-radius: 6px;
   border: none;
-  font-size: 1rem;
+  font-size: 0.8rem;
 }
 
 #savedCharacters {
   margin: 10px;
   padding: 6px;
   border-radius: 5px;
-  font-size: 1rem;
+  font-size: 0.8rem;
 }
 
 #removeCharacter {
   padding: 6px 10px;
   border-radius: 6px;
   border: none;
-  font-size: 1rem;
+  font-size: 0.8rem;
 }
 
 #mythicRating {
