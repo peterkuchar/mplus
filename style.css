@@ -94,6 +94,7 @@ body::before {
   padding-bottom: env(safe-area-inset-bottom);
   box-sizing: border-box;
   overflow: hidden;
+  margin-bottom: 10px;
 }
 
 /* Dungeon boxy */
@@ -170,3 +171,4 @@ body::before {
     font-size: 0.9rem;
   }
 }
+
