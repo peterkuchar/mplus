@@ -92,7 +92,7 @@ body::before {
   gap: 15px;
   padding: 15px;
   box-sizing: border-box;
-  padding-bottom: 10%;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }
 
 /* Dungeon boxy */
@@ -160,6 +160,7 @@ body::before {
     font-size: 5rem;
   }
 }
+
 
 
 
