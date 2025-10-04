@@ -122,23 +122,23 @@ body::before {
   margin: 0;
   font-size: 0.8rem;
   /* background: rgba(0, 0, 0, 0.6); */
-  padding: 3px 6px;
-  border-radius: 4px;
+  /* padding: 3px 6px; */
+  /* border-radius: 4px; */
 }
 
 .level {
   font-size: 1.5rem;
   font-weight: bold;
   /* background: rgba(0, 0, 0, 0.6); */
-  border-radius: 8px;
-  padding: 4px 14px;
+  /* border-radius: 8px; */
+  /* padding: 4px 14px; */
   margin-top: 8px;
 }
 
 .score, .time {
   /* background: rgba(0, 0, 0, 0.6); */
-  padding: 2px 6px;
-  border-radius: 5px;
+  /* padding: 2px 6px;
+  border-radius: 5px; */
   margin-top: 4px;
   font-size: 0.7rem;
 }
