@@ -111,6 +111,7 @@ body::before {
   text-align: center;
   text-shadow: 2px 2px 6px black;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 4px;
 }
 
 .dungeon:hover {
@@ -161,6 +162,7 @@ body::before {
     font-size: 0.9rem;
   }
 }
+
 
 
 
