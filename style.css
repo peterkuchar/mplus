@@ -129,7 +129,7 @@ body::before {
 }
 
 .score, .time {  
-  margin-top: 4px;
+  margin: 4px 0px;
   font-size: 0.7rem;
 }
 
@@ -161,5 +161,6 @@ body::before {
     font-size: 0.9rem;
   }
 }
+
 
 
