@@ -120,25 +120,16 @@ body::before {
 
 .dungeon h3 {
   margin: 0;
-  font-size: 0.8rem;
-  /* background: rgba(0, 0, 0, 0.6); */
-  /* padding: 3px 6px; */
-  /* border-radius: 4px; */
+  font-size: 0.8rem;  
 }
 
 .level {
   font-size: 1.5rem;
-  font-weight: bold;
-  /* background: rgba(0, 0, 0, 0.6); */
-  /* border-radius: 8px; */
-  /* padding: 4px 14px; */
+  font-weight: bold; 
   margin-top: 8px;
 }
 
-.score, .time {
-  /* background: rgba(0, 0, 0, 0.6); */
-  /* padding: 2px 6px;
-  border-radius: 5px; */
+.score, .time {  
   margin-top: 4px;
   font-size: 0.7rem;
 }
@@ -171,3 +162,4 @@ body::before {
     font-size: 0.9rem;
   }
 }
+
