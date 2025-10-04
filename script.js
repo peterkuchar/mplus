@@ -1,27 +1,29 @@
-// ----------------------- script.js (kompletný) -----------------------
+// --- script.js (kompletný) ---
 
-// pomocná: nájdi select element pre uložené postavy (support pre rôzne id v HTML)
-function getSavedCharactersSelect() {
-  return document.getElementById("savedCharacters") || document.getElementById("characters") || null;
-}
-
-// Normalizácia názvov dungeonov - používame Unicode escapes, nie "fancy" znaky priamo
+/* --------------------
+   Pomocné: normalizácia mien dungeonov
+   odstráni rôzne apostrofy/pomlčky/diakritiku a zmení na lowercase
+   -------------------- */
 function normalizeName(s) {
   if (!s) return "";
   return s
     .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")              // odstráni kombinované diakritické znaky
-    .replace(/[\u2019\u2018\u0060\u02BB\u2032]/g, "'") // rôzne apostrofy → ASCII '
-    .replace(/[\u2013\u2014\u2212\u002D]/g, "-")  // rôzne pomlčky/minusky → ASCII -
-    .replace(/[^a-zA-Z0-9'\- ]+/g, " ")          // povolíme len písmená, čísla, apostrof, pomlčku, medzeru
-    .replace(/\s+/g, " ")                        // viac medzier -> jedna
+    .replace(/[\u0300-\u036f]/g, "")              // diakritika
+    .replace(/[\u2019\u2018\u0060\u02BB\u2032]/g, "'") // rôzne apostrofy -> '
+    .replace(/[\u2013\u2014\u2212\u002D]/g, "-")  // rôzne pomlčky -> -
+    .replace(/[^a-zA-Z0-9'\- ]+/g, " ")          // povolené znaky
+    .replace(/\s+/g, " ")
     .trim()
     .toLowerCase();
 }
 
-// RAW mapovanie (ľudsky čitateľné názvy) - môžeme sem doplniť ďalšie názvy
+/* --------------------
+   Raw mapovanie (čitateľné názvy -> obrázky)
+   Ak chceš, môžeš sem doplniť ďalšie názvy.
+   -------------------- */
 const rawDungeonBackgrounds = {
   "Eco-Dome Al'dani": "eco.jpg",
+  "Eco-Dome Al'dari": "eco.jpg", // tolerancia variant
   "Ara-Kara, City of Echoes": "ara.jpg",
   "The Dawnbreaker": "dawn.jpg",
   "Priory of the Sacred Flame": "priory.jpg",
@@ -31,37 +33,31 @@ const rawDungeonBackgrounds = {
   "Tazavesh: So'leah's Gambit": "gambit.jpg"
 };
 
-// Vytvorime normalizovanu mapu kde kluce su normalized names -> obrazok
+// vytvoríme normalizovanú mapu: normalizedName -> filename
 const dungeonBackgrounds = {};
-Object.entries(rawDungeonBackgrounds).forEach(([k, v]) => {
-  dungeonBackgrounds[normalizeName(k)] = v;
+Object.entries(rawDungeonBackgrounds).forEach(([name, img]) => {
+  dungeonBackgrounds[normalizeName(name)] = img;
 });
 
-// Debug: vypis kluce (môžeš to zakomentovať neskôr)
+// Debug (môžeš zakomentovať ak chceš)
 console.log("Dungeon bg keys:", Object.keys(dungeonBackgrounds));
 
-// ----------------------- Realms / Characters / UI -----------------------
-
-let characters = JSON.parse(localStorage.getItem("characters")) || [];
-let selectedCharacterIndex = 0;
-
-// Načítanie realms.json a naplnenie <select id="realm">
+/* --------------------
+   Načítanie realms.json (lokálny súbor)
+   -------------------- */
 async function loadRealms() {
   try {
     const res = await fetch("realms.json");
     if (!res.ok) throw new Error(`realms.json load failed: ${res.status}`);
     const realms = await res.json();
     const realmSelect = document.getElementById("realm");
-    if (!realmSelect) {
-      console.warn("No #realm element found in DOM.");
-      return;
-    }
-    // očistíme a pridáme
+    if (!realmSelect) return;
+
+    // clear a pridaj
     realmSelect.innerHTML = `<option value="">Vyber realm</option>`;
     realms.forEach(r => {
       const opt = document.createElement("option");
-      // realms.json expected { name, slug }
-      opt.value = r.slug ?? r;        // support plain array of names too
+      opt.value = r.slug ?? r;
       opt.textContent = r.name ?? r;
       realmSelect.appendChild(opt);
     });
@@ -71,40 +67,58 @@ async function loadRealms() {
   }
 }
 
+/* --------------------
+   Správa postáv (localStorage)
+   -------------------- */
+let characters = JSON.parse(localStorage.getItem("characters")) || [];
+
 function saveCharacters() {
   localStorage.setItem("characters", JSON.stringify(characters));
 }
 
-// vykresli ulozene postavy do selectu (support pre 2 mozne id)
-function renderCharacterSelect() {
-  const select = getSavedCharactersSelect();
-  if (!select) {
-    console.warn("No saved-characters select found (ids: savedCharacters or characters).");
-    return;
-  }
+function renderCharacterList() {
+  const select = document.getElementById("savedCharacters");
+  if (!select) return;
   select.innerHTML = `<option value="">-- vyber postavu --</option>`;
 
   characters.forEach((c, i) => {
     const opt = document.createElement("option");
     opt.value = i;
     opt.textContent = `${c.name} (${c.realm}, ${c.region})`;
-    if (i === selectedCharacterIndex) opt.selected = true;
     select.appendChild(opt);
   });
+
+  // change handler: načítať vybranú postavu
+  select.onchange = (e) => {
+    const idx = parseInt(e.target.value, 10);
+    if (!isNaN(idx)) {
+      loadCharacterData(characters[idx]);
+    }
+  };
+
+  // remove button
+  const removeBtn = document.getElementById("removeCharacter");
+  if (removeBtn) {
+    removeBtn.onclick = () => {
+      const idx = parseInt(select.value, 10);
+      if (isNaN(idx)) return;
+      characters.splice(idx, 1);
+      saveCharacters();
+      renderCharacterList();
+      document.getElementById("dungeons").innerHTML = "<p>Žiadna postava nie je pridaná.</p>";
+      updateMythicRating("-");
+    };
+  }
 }
 
-// pridaj postavu, alebo ak existuje, vyber ju
+/* --------------------
+   Pridanie postavy (s kontrolou duplicit)
+   -------------------- */
 async function addCharacter() {
-  const regionEl = document.getElementById("region");
-  const realmEl = document.getElementById("realm");
-  const nameEl = document.getElementById("character");
-  if (!regionEl || !realmEl || !nameEl) {
-    alert("Chýba niektorý z inputov (region/realm/character).");
-    return;
-  }
-  const region = regionEl.value;
-  const realm = realmEl.value;
-  const name = nameEl.value.trim();
+  const region = document.getElementById("region").value;
+  const realm = document.getElementById("realm").value;
+  const name = document.getElementById("character").value.trim();
+
   if (!region || !realm || !name) {
     alert("Vyplň všetky polia!");
     return;
@@ -117,144 +131,111 @@ async function addCharacter() {
   );
 
   if (existingIndex !== -1) {
-    // ak existuje, len vyber a nacitaj
-    selectedCharacterIndex = existingIndex;
-    renderCharacterSelect();
+    // už existuje -> vyber a načítaj
+    document.getElementById("savedCharacters").value = existingIndex;
     loadCharacterData(characters[existingIndex]);
     return;
   }
 
   const newChar = { region, realm, name };
   characters.push(newChar);
-  selectedCharacterIndex = characters.length - 1;
   saveCharacters();
-  renderCharacterSelect();
-  // vyciistime meno input
-  nameEl.value = "";
+  renderCharacterList();
+  document.getElementById("character").value = "";
   loadCharacterData(newChar);
 }
 
-// odstran vybranu postavu
-function removeSelectedCharacter() {
-  const select = getSavedCharactersSelect();
-  if (!select) return;
-  const idx = parseInt(select.value, 10);
-  if (isNaN(idx)) return;
-  characters.splice(idx, 1);
-  if (selectedCharacterIndex >= characters.length) selectedCharacterIndex = characters.length - 1;
-  saveCharacters();
-  renderCharacterSelect();
-  if (characters.length > 0) {
-    loadCharacterData(characters[selectedCharacterIndex]);
-  } else {
-    const d = document.getElementById("dungeons");
-    if (d) d.innerHTML = "<p>Žiadna postava nie je pridaná.</p>";
-  }
-}
-
-// vyber postavy zo selectu
-function onSelectCharacterChange(e) {
-  const idx = parseInt(e.target.value, 10);
-  if (isNaN(idx)) return;
-  selectedCharacterIndex = idx;
-  saveCharacters();
-  loadCharacterData(characters[idx]);
-}
-
-// ----------------------- Raider.IO fetch + render -----------------------
-
+/* --------------------
+   Načítanie dát z Raider.IO
+   Požiadame o mythic_plus_best_runs aj mythic_plus_scores_by_season (current)
+   -------------------- */
 async function loadCharacterData(char) {
   try {
-    const url = `https://raider.io/api/v1/characters/profile?region=${char.region}&realm=${encodeURIComponent(char.realm)}&name=${encodeURIComponent(char.name)}&fields=mythic_plus_scores_by_season:current,mythic_plus_best_runs`;
+    const url = `https://raider.io/api/v1/characters/profile?region=${char.region}&realm=${encodeURIComponent(char.realm)}&name=${encodeURIComponent(char.name)}&fields=mythic_plus_best_runs:all:1,mythic_plus_scores_by_season:current`;
     console.log("Fetching Raider.IO:", url);
 
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Chyba pri načítaní dát z Raider.IO");
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Raider.IO ${res.status}`);
+    const data = await res.json();
+    console.log("Received data:", data);
 
-    const data = await response.json();
-    console.log("Received data:", data); // <-- tu uvidíš celé dáta
-
-    const ratingEl = document.getElementById("mythicRating");
-    if (ratingEl) {
-      const rating = data.mythic_plus_scores_by_season[0].scores.all ?? "Žiadny rating";
-      ratingEl.textContent = `Mythic+ Rating: ${rating}`;
+    // rating: preferujeme mythic_plus_scores_by_season[0].scores.all
+    let rating = "Žiadny rating";
+    try {
+      if (Array.isArray(data.mythic_plus_scores_by_season) && data.mythic_plus_scores_by_season.length > 0) {
+        rating = data.mythic_plus_scores_by_season[0]?.scores?.all ?? "Žiadny rating";
+      } else if (data.mythic_plus_scores) {
+        rating = data.mythic_plus_scores.all ?? "Žiadny rating";
+      }
+    } catch (err) {
+      console.warn("Rating parse fallback:", err);
+      rating = data.mythic_plus_scores?.all ?? "Žiadny rating";
     }
 
+    updateMythicRating(rating);
     renderDungeons(data);
-  } catch (error) {
-    console.error("Chyba pri načítaní dát pre postavu:", error);
+  } catch (err) {
+    console.error("Chyba pri načítaní dát pre postavu:", err);
+    const container = document.getElementById("dungeons");
+    if (container) container.innerHTML = "<p>Chyba pri načítaní dát.</p>";
+    updateMythicRating("Žiadny rating");
   }
 }
 
-
-
+/* --------------------
+   Render dungeonov (2x4 alebo 4x2 podľa CSS)
+   -------------------- */
 function renderDungeons(data) {
   const container = document.getElementById("dungeons");
-  if (!container) {
-    console.warn("No #dungeons element found.");
-    return;
-  }
+  if (!container) return;
   container.innerHTML = "";
 
-  const runs = (data && data.mythic_plus_best_runs) ? data.mythic_plus_best_runs : [];
-  if (runs.length === 0) {
+  const runs = data?.mythic_plus_best_runs ?? [];
+  if (!runs || runs.length === 0) {
     container.innerHTML = "<p>Žiadne dokončené runy.</p>";
     return;
   }
 
-  // //CSS pre grid 2x4
-  // container.style.display = "grid";
-  // container.style.gridTemplateColumns = "repeat(2, 1fr)";
-  // container.style.gridTemplateRows = "repeat(4, 1fr)";
-  // container.style.gap = "10px";
-  // container.style.padding = "20px";
-  // container.style.height = "100%"; // výška okna mínus header
+  // zobrazíme prvých 8 runov (pokiaľ by ich API vracalo viac)
+  const runsToShow = runs.slice(0, 8);
 
-  // Debug: vypisat names a normalized
-  console.log("Received runs:", runs.map(r => r.dungeon));
-
-  runs.forEach(run => {
+  runsToShow.forEach(run => {
     const div = document.createElement("div");
     div.className = "dungeon";
 
-    // normalizuj nazov a najdi pozadie
-    const norm = normalizeName(run.dungeon);
-    const bg = dungeonBackgrounds[norm] || null;
-    console.log("Run:", run.dungeon, "->", norm, "bg:", bg);
-
+    // nájdeme pozadie cez normalizované kľúče
+    const key = normalizeName(run.dungeon);
+    const bg = dungeonBackgrounds[key] || null;
     if (bg) {
-      // skontroluj ci subor existuje cez Network tab, alebo ci je cesta spravna
       div.style.backgroundImage = `url('${bg}')`;
       div.style.backgroundSize = "cover";
       div.style.backgroundPosition = "center";
-    } else {
-      // optional fallback (nepovinne)
-      // div.style.backgroundImage = "url('default.jpg')";
     }
 
-    const h3 = document.createElement("h3");
-    h3.textContent = run.dungeon;
-    div.appendChild(h3);
+    const title = document.createElement("h3");
+    title.textContent = run.dungeon;
+    div.appendChild(title);
 
-    const lvl = document.createElement("div");
-    lvl.className = "level";
-    lvl.textContent = `+${run.mythic_level}`;
-    div.appendChild(lvl);
+    const level = document.createElement("div");
+    level.className = "level";
+    level.textContent = `+${run.mythic_level}`;
+    div.appendChild(level);
 
     const score = document.createElement("div");
     score.className = "score";
-    score.textContent = `Score: ${run.score ?? 0}`;
+    score.textContent = `Score: ${run.score ? Math.round(run.score) : 0}`;
     div.appendChild(score);
 
     const time = document.createElement("div");
     time.className = "time";
     if (run.clear_time_ms != null && run.par_time_ms != null) {
-      const totalSeconds = Math.floor(run.clear_time_ms / 1000);
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
-      const clearFormatted = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-      const parMinutes = Math.floor(run.par_time_ms / 60000);
-      time.textContent = `${clearFormatted} / ${parMinutes}`;
+      const formatTime = ms => {
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      };
+      time.textContent = `${formatTime(run.clear_time_ms)} / ${Math.floor(run.par_time_ms / 60000)}`;
     } else {
       time.textContent = "Nedokončené";
     }
@@ -264,26 +245,61 @@ function renderDungeons(data) {
   });
 }
 
-// ----------------------- init -----------------------
+/* --------------------
+   Farebný Mythic+ Rating + animácia (bez rozbitia)
+   rating môže byť číslo alebo text ("Žiadny rating")
+   -------------------- */
+function updateMythicRating(rating) {
+  const el = document.getElementById("mythicRating");
+  if (!el) return;
+
+  el.textContent = `Mythic+ Rating: ${rating}`;
+
+  // ak je to string, pokúsime sa z neho dostať číslo
+  const num = typeof rating === "number" ? rating : Number(rating);
+  let color = "#cccccc"; // default / šedé
+  if (!Number.isFinite(num) || num <= 0) {
+    color = "#cccccc";
+  } else if (num >= 2500) {
+    color = "#ff8000"; // legendary
+  } else if (num >= 2000) {
+    color = "#a335ee"; // epic
+  } else if (num >= 1500) {
+    color = "#0070dd"; // rare
+  } else {
+    color = "#1eff00"; // uncommon / green
+  }
+
+  el.style.color = color;
+
+  // krátke "flash" zvýraznenie pri aktualizácii (len ak je number)
+  if (Number.isFinite(num) && num > 0) {
+    el.animate(
+      [
+        { transform: "scale(1)", filter: "brightness(1)" },
+        { transform: "scale(1.04)", filter: "brightness(1.25)" },
+        { transform: "scale(1)", filter: "brightness(1)" }
+      ],
+      { duration: 700, easing: "ease-out" }
+    );
+  }
+}
+
+/* --------------------
+   Inicializácia pri načítaní stránky
+   -------------------- */
 window.addEventListener("DOMContentLoaded", () => {
-  // load realms and render saved characters
+  // priradíme tlačidlo Pridať (ak nie je onclick v HTML)
+  const addBtn = document.querySelector("button[onclick='addCharacter()']") || document.getElementById("addCharacter");
+  if (addBtn) addBtn.onclick = addCharacter;
+
   loadRealms();
-  renderCharacterSelect();
+  renderCharacterList();
 
-  // attach listeners
-  const select = getSavedCharactersSelect();
-  if (select) select.addEventListener("change", onSelectCharacterChange);
-
-  const addBtn = document.getElementById("addCharacterBtn") || document.querySelector("button[onclick='addCharacter()']");
-  if (addBtn) addBtn.addEventListener("click", addCharacter);
-
-  const removeBtn = document.getElementById("removeCharacter") || null;
-  if (removeBtn) removeBtn.addEventListener("click", removeSelectedCharacter);
-
-  // if we have characters, auto-load the selected/last one
   if (characters.length > 0) {
-    if (selectedCharacterIndex < 0 || selectedCharacterIndex >= characters.length) selectedCharacterIndex = 0;
-    loadCharacterData(characters[selectedCharacterIndex]);
+    loadCharacterData(characters[0]);
+    const savedSelect = document.getElementById("savedCharacters");
+    if (savedSelect) savedSelect.value = 0;
   } else {
     const d = document.getElementById("dungeons");
     if (d) d.innerHTML = "<p>Žiadna postava nie je pridaná.</p>";
