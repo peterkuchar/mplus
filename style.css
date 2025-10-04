@@ -154,7 +154,12 @@ body::before {
   #mythicRating {
     font-size: 1.5rem;
   }
+
+  .level {
+    font-size: 5rem;
+  }
 }
+
 
 
 
