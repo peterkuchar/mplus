@@ -118,13 +118,12 @@ body::before {
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
-.dungeon h3 {
-  margin: 0;
+.dungeon h3 {  
   font-size: 0.8rem;  
 }
 
 .level {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: bold; 
   margin-top: 8px;
 }
@@ -162,4 +161,5 @@ body::before {
     font-size: 0.9rem;
   }
 }
+
 
