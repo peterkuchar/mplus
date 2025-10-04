@@ -120,14 +120,14 @@ body::before {
 
 .dungeon h3 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.8rem;
   background: rgba(0, 0, 0, 0.6);
   padding: 4px 8px;
   border-radius: 5px;
 }
 
 .level {
-  font-size: 1.5rem;
+  font-size: 0.8rem;
   font-weight: bold;
   background: rgba(0, 0, 0, 0.6);
   border-radius: 8px;
@@ -162,5 +162,6 @@ body::before {
     font-size: 5rem;
   }
 }
+
 
 
