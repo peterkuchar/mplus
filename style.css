@@ -1,70 +1,157 @@
-body {
+/* ====== VŠEOBECNÉ NASTAVENIE ====== */
+html, body {
   margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
   font-family: Arial, sans-serif;
+  color: #fff;
   background: url("bg.jpg") no-repeat center center fixed;
   background-size: cover;
-  color: #fff;
-  text-align: center;
 }
 
-.char-select {
-  margin: 20px;
+/* Jemné stmavenie pozadia kvôli čitateľnosti */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: -1;
 }
 
-.char-list {
-  margin: 20px;
+/* ====== APP KONTEJNER ====== */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
 }
 
-.char-item {
-  margin: 5px;
-  display: inline-block;
-  padding: 5px 10px;
-  background: #333;
-  border-radius: 5px;
-}
-
-.char-item button {
-  margin-left: 10px;
-}
-
-.dungeon-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  padding: 20px;
-}
-
-.dungeon {
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  height: 200px;
-  border-radius: 10px;
-  overflow: hidden;
+/* ====== HEADER (25%) ====== */
+#header {
+  height: 25%;
+  padding: 10px 20px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
+}
+
+#header h1 {
+  margin: 5px 0;
+  font-size: 1.6rem;
+  text-shadow: 2px 2px 6px #000;
+}
+
+.char-select {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.char-select select,
+.char-select input,
+.char-select button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+}
+
+#savedCharacters {
+  margin: 10px 5px;
+  padding: 6px;
+  border-radius: 5px;
+}
+
+#removeCharacter {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+#mythicRating {
+  margin-top: 10px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 6px #000;
+}
+
+/* ====== DUNGEONY (75%) ====== */
+#dungeons {
+  height: 75%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 15px;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+/* Dungeon boxy */
+.dungeon {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertikálne stred */
+  align-items: center; /* horizontálne stred */
+  text-align: center;
+  text-shadow: 2px 2px 6px black;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dungeon:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
 .dungeon h3 {
   margin: 0;
-  font-size: 20px;
-  background: rgba(0,0,0,0.5);
-  padding: 5px 10px;
+  font-size: 18px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 8px;
   border-radius: 5px;
 }
 
 .level {
-  font-size: 48px;
+  font-size: 42px;
   font-weight: bold;
-  color: #fff;
-  text-shadow: 2px 2px 5px black;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  padding: 2px 10px;
+  margin-top: 8px;
 }
 
 .score, .time {
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   padding: 3px 8px;
   border-radius: 5px;
   margin-top: 5px;
+}
+
+/* ====== GRID PRE PC (4x2) ====== */
+@media (min-width: 900px) {
+  #dungeons {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  #header h1 {
+    font-size: 1.8rem;
+  }
+
+  #mythicRating {
+    font-size: 1.5rem;
+  }
 }

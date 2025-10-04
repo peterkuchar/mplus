@@ -202,12 +202,13 @@ function renderDungeons(data) {
     return;
   }
 
-  //CSS pre grid 2x4
-  container.style.display = "grid";
-  container.style.gridTemplateColumns = "repeat(2, 1fr)";
-  container.style.gridTemplateRows = "repeat(2, auto)";
-  container.style.gap = "10px";
-  container.style.padding = "20px";
+  // //CSS pre grid 2x4
+  // container.style.display = "grid";
+  // container.style.gridTemplateColumns = "repeat(2, 1fr)";
+  // container.style.gridTemplateRows = "repeat(4, 1fr)";
+  // container.style.gap = "10px";
+  // container.style.padding = "20px";
+  // container.style.height = "100%"; // výška okna mínus header
 
   // Debug: vypisat names a normalized
   console.log("Received runs:", runs.map(r => r.dungeon));

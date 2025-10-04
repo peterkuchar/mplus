@@ -6,36 +6,41 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="char-select">
-    <select id="region">
-      <option value="eu">EU</option>
-      <option value="us">US - soon</option>
-      <option value="kr">KR - soon</option>
-      <option value="tw">TW - soon</option>
-    </select>
+  <div id="app">
+    <header id="header">
+      <h1>Mythic+ Tracker</h1>
+        <!-- Tu pridáme výber postavy -->
+        <div class="char-select">
+          <select id="region">
+            <option value="eu">EU</option>
+            <option value="us">US - soon</option>
+            <option value="kr">KR - soon</option>
+            <option value="tw">TW - soon</option>
+          </select>
 
-    <select id="realm">
-      <option value="">Vyber realm</option>
-    </select>
+          <select id="realm">
+            <option value="">Vyber realm</option>
+          </select>
 
-    <input type="text" id="character" placeholder="Meno postavy">
-    <button onclick="addCharacter()">Pridať</button>
+          <input type="text" id="character" placeholder="Meno postavy">
+          <button onclick="addCharacter()">Pridať</button>
+        </div>
+
+        <!-- Tu sa zobrazí zoznam postáv -->
+          <label for="savedCharacters">Moje postavy:</label>
+            <select id="savedCharacters">
+              <option value="">-- vyber postavu --</option>
+            </select>
+            
+            <button id="removeCharacter">Odobrať postavu</button>
+
+        <!-- tu pridáme rating -->
+          <h1 id="mythicRating">Mythic+ Rating: -</h1>
+    </header>            
+
+        <!-- Tu sa zobrazia dungeony -->
+        <div id="dungeons" class="dungeon-grid"></div>
   </div>
-
-  <!-- Tu sa zobrazí zoznam postáv -->
-  <label for="savedCharacters">Moje postavy:</label>
-    <select id="savedCharacters">
-      <option value="">-- vyber postavu --</option>
-    </select>
-  <button id="removeCharacter">Odobrať postavu</button>
-
-  <!-- tu pridáme rating -->
-  <h1 id="mythicRating">Mythic+ Rating: -</h1>
-
-  <div id="dungeons"></div>
-
-  <!-- Tu sa zobrazia dungeony -->
-  <div id="dungeons" class="dungeon-grid"></div>
 
   <script src="script.js"></script>
 </body>
