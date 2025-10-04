@@ -1,8 +1,5 @@
-// --- script.js (kompletný) ---
-
 /* --------------------
    Pomocné: normalizácia mien dungeonov
-   odstráni rôzne apostrofy/pomlčky/diakritiku a zmení na lowercase
    -------------------- */
 function normalizeName(s) {
   if (!s) return "";
@@ -18,12 +15,11 @@ function normalizeName(s) {
 }
 
 /* --------------------
-   Raw mapovanie (čitateľné názvy -> obrázky)
-   Ak chceš, môžeš sem doplniť ďalšie názvy.
+   Mapovanie dungeonov -> pozadia
    -------------------- */
 const rawDungeonBackgrounds = {
   "Eco-Dome Al'dani": "eco.jpg",
-  "Eco-Dome Al'dari": "eco.jpg", // tolerancia variant
+  "Eco-Dome Al'dari": "eco.jpg",
   "Ara-Kara, City of Echoes": "ara.jpg",
   "The Dawnbreaker": "dawn.jpg",
   "Priory of the Sacred Flame": "priory.jpg",
@@ -33,17 +29,13 @@ const rawDungeonBackgrounds = {
   "Tazavesh: So'leah's Gambit": "gambit.jpg"
 };
 
-// vytvoríme normalizovanú mapu: normalizedName -> filename
 const dungeonBackgrounds = {};
 Object.entries(rawDungeonBackgrounds).forEach(([name, img]) => {
   dungeonBackgrounds[normalizeName(name)] = img;
 });
 
-// Debug (môžeš zakomentovať ak chceš)
-console.log("Dungeon bg keys:", Object.keys(dungeonBackgrounds));
-
 /* --------------------
-   Načítanie realms.json (lokálny súbor)
+   Načítanie realms.json
    -------------------- */
 async function loadRealms() {
   try {
@@ -53,7 +45,6 @@ async function loadRealms() {
     const realmSelect = document.getElementById("realm");
     if (!realmSelect) return;
 
-    // clear a pridaj
     realmSelect.innerHTML = `<option value="">Vyber realm</option>`;
     realms.forEach(r => {
       const opt = document.createElement("option");
@@ -61,7 +52,6 @@ async function loadRealms() {
       opt.textContent = r.name ?? r;
       realmSelect.appendChild(opt);
     });
-    console.log("Loaded realms:", realmSelect.options.length - 1);
   } catch (err) {
     console.error("Chyba pri načítaní realms.json:", err);
   }
@@ -88,7 +78,6 @@ function renderCharacterList() {
     select.appendChild(opt);
   });
 
-  // change handler: načítať vybranú postavu
   select.onchange = (e) => {
     const idx = parseInt(e.target.value, 10);
     if (!isNaN(idx)) {
@@ -96,7 +85,6 @@ function renderCharacterList() {
     }
   };
 
-  // remove button
   const removeBtn = document.getElementById("removeCharacter");
   if (removeBtn) {
     removeBtn.onclick = () => {
@@ -107,12 +95,13 @@ function renderCharacterList() {
       renderCharacterList();
       document.getElementById("dungeons").innerHTML = "<p>Žiadna postava nie je pridaná.</p>";
       updateMythicRating("-");
+      updateCharacterInfo(null);
     };
   }
 }
 
 /* --------------------
-   Pridanie postavy (s kontrolou duplicit)
+   Pridanie postavy
    -------------------- */
 async function addCharacter() {
   const region = document.getElementById("region").value;
@@ -131,7 +120,6 @@ async function addCharacter() {
   );
 
   if (existingIndex !== -1) {
-    // už existuje -> vyber a načítaj
     document.getElementById("savedCharacters").value = existingIndex;
     loadCharacterData(characters[existingIndex]);
     return;
@@ -147,19 +135,16 @@ async function addCharacter() {
 
 /* --------------------
    Načítanie dát z Raider.IO
-   Požiadame o mythic_plus_best_runs aj mythic_plus_scores_by_season (current)
    -------------------- */
 async function loadCharacterData(char) {
   try {
-    const url = `https://raider.io/api/v1/characters/profile?region=${char.region}&realm=${encodeURIComponent(char.realm)}&name=${encodeURIComponent(char.name)}&fields=mythic_plus_best_runs:all:1,mythic_plus_scores_by_season:current`;
+    const url = `https://raider.io/api/v1/characters/profile?region=${char.region}&realm=${encodeURIComponent(char.realm)}&name=${encodeURIComponent(char.name)}&fields=mythic_plus_best_runs:all:1,mythic_plus_scores_by_season:current,gear`;
     console.log("Fetching Raider.IO:", url);
 
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Raider.IO ${res.status}`);
     const data = await res.json();
-    console.log("Received data:", data);
 
-    // rating: preferujeme mythic_plus_scores_by_season[0].scores.all
     let rating = "Žiadny rating";
     try {
       if (Array.isArray(data.mythic_plus_scores_by_season) && data.mythic_plus_scores_by_season.length > 0) {
@@ -167,23 +152,43 @@ async function loadCharacterData(char) {
       } else if (data.mythic_plus_scores) {
         rating = data.mythic_plus_scores.all ?? "Žiadny rating";
       }
-    } catch (err) {
-      console.warn("Rating parse fallback:", err);
+    } catch {
       rating = data.mythic_plus_scores?.all ?? "Žiadny rating";
     }
 
     updateMythicRating(rating);
+    updateCharacterInfo(data);
     renderDungeons(data);
   } catch (err) {
     console.error("Chyba pri načítaní dát pre postavu:", err);
-    const container = document.getElementById("dungeons");
-    if (container) container.innerHTML = "<p>Chyba pri načítaní dát.</p>";
+    document.getElementById("dungeons").innerHTML = "<p>Chyba pri načítaní dát.</p>";
     updateMythicRating("Žiadny rating");
   }
 }
 
 /* --------------------
-   Render dungeonov (2x4 alebo 4x2 podľa CSS)
+   Info o postave
+   -------------------- */
+function updateCharacterInfo(data) {
+  const el = document.getElementById("charInfo");
+  if (!el) return;
+
+  if (!data) {
+    el.textContent = "";
+    return;
+  }
+
+  const name = data.name ?? "-";
+  const race = data.race ?? "-";
+  const cls = data.class ?? "-";
+  const spec = data.active_spec_name ?? "-";
+  const ilvl = data.gear?.item_level_equipped ?? "-";
+
+  el.textContent = `${name} | ${race} | ${cls} | ${spec} | ${ilvl} ilvl`;
+}
+
+/* --------------------
+   Render dungeonov
    -------------------- */
 function renderDungeons(data) {
   const container = document.getElementById("dungeons");
@@ -196,14 +201,11 @@ function renderDungeons(data) {
     return;
   }
 
-  // zobrazíme prvých 8 runov (pokiaľ by ich API vracalo viac)
   const runsToShow = runs.slice(0, 8);
-
   runsToShow.forEach(run => {
     const div = document.createElement("div");
     div.className = "dungeon";
 
-    // nájdeme pozadie cez normalizované kľúče
     const key = normalizeName(run.dungeon);
     const bg = dungeonBackgrounds[key] || null;
     if (bg) {
@@ -235,7 +237,7 @@ function renderDungeons(data) {
         const seconds = totalSeconds % 60;
         return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
       };
-      time.textContent = `${formatTime(run.clear_time_ms)} / ${Math.floor(run.par_time_ms / 60000)}`;
+      time.textContent = `${formatTime(run.clear_time_ms)} / ${Math.floor(run.par_time_ms / 60000)}m`;
     } else {
       time.textContent = "Nedokončené";
     }
@@ -246,33 +248,22 @@ function renderDungeons(data) {
 }
 
 /* --------------------
-   Farebný Mythic+ Rating + animácia (bez rozbitia)
-   rating môže byť číslo alebo text ("Žiadny rating")
+   Farebný Mythic+ Rating
    -------------------- */
 function updateMythicRating(rating) {
   const el = document.getElementById("mythicRating");
   if (!el) return;
 
   el.textContent = `Mythic+ Rating: ${rating}`;
-
-  // ak je to string, pokúsime sa z neho dostať číslo
   const num = typeof rating === "number" ? rating : Number(rating);
-  let color = "#cccccc"; // default / šedé
-  if (!Number.isFinite(num) || num <= 0) {
-    color = "#cccccc";
-  } else if (num >= 2500) {
-    color = "#ff8000"; // legendary
-  } else if (num >= 2000) {
-    color = "#a335ee"; // epic
-  } else if (num >= 1500) {
-    color = "#0070dd"; // rare
-  } else {
-    color = "#1eff00"; // uncommon / green
-  }
+  let color = "#ccc";
+  if (!Number.isFinite(num) || num <= 0) color = "#ccc";
+  else if (num >= 2500) color = "#ff8000";
+  else if (num >= 2000) color = "#a335ee";
+  else if (num >= 1500) color = "#0070dd";
+  else color = "#1eff00";
 
   el.style.color = color;
-
-  // krátke "flash" zvýraznenie pri aktualizácii (len ak je number)
   if (Number.isFinite(num) && num > 0) {
     el.animate(
       [
@@ -286,10 +277,9 @@ function updateMythicRating(rating) {
 }
 
 /* --------------------
-   Inicializácia pri načítaní stránky
+   Inicializácia
    -------------------- */
 window.addEventListener("DOMContentLoaded", () => {
-  // priradíme tlačidlo Pridať (ak nie je onclick v HTML)
   const addBtn = document.querySelector("button[onclick='addCharacter()']") || document.getElementById("addCharacter");
   if (addBtn) addBtn.onclick = addCharacter;
 
