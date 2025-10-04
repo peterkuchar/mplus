@@ -140,7 +140,7 @@ body::before {
 }
 
 /* ====== GRID PRE PC (4x2) ====== */
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   #dungeons {
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(2, 1fr);
@@ -155,3 +155,4 @@ body::before {
     font-size: 1.5rem;
   }
 }
+
