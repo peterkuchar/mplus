@@ -40,7 +40,7 @@ body::before {
 
 #header h1 {
   margin: 5px 0;
-  font-size: 2rem;
+  font-size: 1.5rem;
   text-shadow: 2px 2px 6px #000;
 }
 
@@ -59,21 +59,21 @@ body::before {
   padding: 6px 10px;
   border-radius: 6px;
   border: none;
-  font-size: 0.9rem;
+  font-size: 0.5rem;
 }
 
 #savedCharacters {
   margin: 10px;
   padding: 6px;
   border-radius: 5px;
-  font-size: 0.9rem;
+  font-size: 0.5rem;
 }
 
 #removeCharacter {
   padding: 6px 10px;
   border-radius: 6px;
   border: none;
-  font-size: 0.9rem;
+  font-size: 0.5rem;
 }
 
 #mythicRating {
@@ -169,6 +169,7 @@ body::before {
     font-size: 0.9rem;
   }
 }
+
 
 
 
