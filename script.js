@@ -44,7 +44,7 @@ async function loadRealms() {
     if (!res.ok) throw new Error(`realms.json load failed: ${res.status}`);
     const realms = await res.json();
     const realmSelect = document.getElementById("realm");
-    realmSelect.innerHTML = `<option value="">Vyber realm</option>`;
+    realmSelect.innerHTML = `<option value="">-- choose realm --</option>`;
     realms.forEach(r => {
       const opt = document.createElement("option");
       opt.value = r.slug ?? r;
@@ -52,7 +52,7 @@ async function loadRealms() {
       realmSelect.appendChild(opt);
     });
   } catch (err) {
-    console.error("Chyba pri načítaní realms.json:", err);
+    console.error("Error at loading realms.json:", err);
   }
 }
 
@@ -68,7 +68,7 @@ function saveCharacters() {
 function renderCharacterList() {
   const select = document.getElementById("savedCharacters");
   if (!select) return;
-  select.innerHTML = `<option value="">-- vyber postavu --</option>`;
+  select.innerHTML = `<option value="">-- choose character --</option>`;
 
   characters.forEach((c, i) => {
     const opt = document.createElement("option");
@@ -90,7 +90,7 @@ function renderCharacterList() {
       characters.splice(idx, 1);
       saveCharacters();
       renderCharacterList();
-      document.getElementById("dungeons").innerHTML = "<p>Žiadna postava nie je pridaná.</p>";
+      document.getElementById("dungeons").innerHTML = "<p>No character is selected.</p>";
       updateMythicRating("-");
     };
   }
@@ -105,7 +105,7 @@ async function addCharacter() {
   const name = document.getElementById("character").value.trim();
 
   if (!region || !realm || !name) {
-    alert("Vyplň všetky polia!");
+    alert("Fill all fields!");
     return;
   }
 
@@ -139,14 +139,14 @@ async function loadCharacterData(char) {
     if (!res.ok) throw new Error(`Raider.IO ${res.status}`);
     const data = await res.json();
 
-    const rating = data.mythic_plus_scores_by_season?.[0]?.scores?.all ?? "Žiadny rating";
+    const rating = data.mythic_plus_scores_by_season?.[0]?.scores?.all ?? "No rating";
     updateMythicRating(rating);
     updateCharacterInfo(data);
     renderDungeons(data);
   } catch (err) {
-    console.error("Chyba pri načítaní dát pre postavu:", err);
-    document.getElementById("dungeons").innerHTML = "<p>Chyba pri načítaní dát.</p>";
-    updateMythicRating("Žiadny rating");
+    console.error("Error at reading data for character:", err);
+    document.getElementById("dungeons").innerHTML = "<p>ERROR at reading data.</p>";
+    updateMythicRating("No rating");
   }
 }
 
@@ -217,7 +217,7 @@ function renderDungeons(data) {
         };
         time.textContent = `${formatTime(run.clear_time_ms)} / ${Math.floor(run.par_time_ms / 60000)}`;
       } else {
-        time.textContent = "Nedokončené";
+        time.textContent = "UNFINISHED";
       }
       div.appendChild(time);
     }
@@ -270,6 +270,6 @@ window.addEventListener("DOMContentLoaded", () => {
     const savedSelect = document.getElementById("savedCharacters");
     if (savedSelect) savedSelect.value = 0;
   } else {
-    document.getElementById("dungeons").innerHTML = "<p>Žiadna postava nie je pridaná.</p>";
+    document.getElementById("dungeons").innerHTML = "<p>No character is selected.</p>";
   }
 });
