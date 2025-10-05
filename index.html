@@ -20,20 +20,20 @@
           </select>
 
           <select id="realm">
-            <option value="">Vyber realm</option>
+            <option value="">pick realm</option>
           </select>
 
-          <input type="text" id="character" placeholder="Meno postavy">
-          <button onclick="addCharacter()">Pridať</button>
+          <input type="text" id="character" placeholder="Character name">
+          <button id="addCharacter" onclick="addCharacter()">Add</button>
         </div>
 
         <!-- Tu sa zobrazí zoznam postáv -->
-          <label for="savedCharacters">Moje postavy:</label>
+          <label for="savedCharacters">My characters:</label>
             <select id="savedCharacters">
-              <option value="">-- vyber postavu --</option>
+              <option value="">-- choose character --</option>
             </select>
             
-            <button id="removeCharacter">Odobrať postavu</button>
+            <button id="removeCharacter">Remove character</button>
 
         <!-- tu pridáme rating -->
           <h1 id="mythicRating">Mythic+ Rating: -</h1>
