@@ -59,21 +59,31 @@ body::before {
   padding: 6px 10px;
   border-radius: 6px;
   border: none;
-  font-size: 0.75rem;
+  font-size: 0.5rem;
+  background-color: #252525;
+  color: rgb(119, 119, 119);
+}
+
+#addCharacter {
+  background-color: #27ae60;
+  color: white;
+  cursor: pointer;
 }
 
 #savedCharacters {
   margin: 10px;
   padding: 6px;
   border-radius: 5px;
-  font-size: 0.75rem;
+  font-size: 0.5rem;
 }
 
 #removeCharacter {
   padding: 6px 10px;
   border-radius: 6px;
   border: none;
-  font-size: 0.75rem;
+  font-size: 0.5rem;
+  background-color: #c0392b;
+  color: white;
 }
 
 #mythicRating {
@@ -84,7 +94,7 @@ body::before {
 }
 
 #charInfo {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 500;
   margin-top: 5px;
   color: #ddd;
@@ -168,9 +178,15 @@ body::before {
   .score, .time {
     font-size: 0.9rem;
   }
+
+  .char-select select,
+  .char-select input,
+  .char-select button,
+  #savedCharacters,
+  #removeCharacter {
+    font-size: 1rem;
+  }
 }
-
-
 
 
 
