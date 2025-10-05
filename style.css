@@ -50,7 +50,7 @@ body::before {
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin: 10px;
+  margin: 10px;  
 }
 
 .char-select select,
@@ -75,6 +75,8 @@ body::before {
   padding: 6px;
   border-radius: 5px;
   font-size: 0.5rem;
+  background-color: #252525;
+  color: rgb(119, 119, 119);
 }
 
 #removeCharacter {
